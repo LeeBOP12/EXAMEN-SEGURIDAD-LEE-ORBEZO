@@ -10,7 +10,7 @@
         <module name="config-server" />
         <module name="service-registry" />
       </profile>
-      <profile name="Annotation profile for ms-asiento" enabled="true">
+      <profile name="Annotation profile for ms-reserva" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
