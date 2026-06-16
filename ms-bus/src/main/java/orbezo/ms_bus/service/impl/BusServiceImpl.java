@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import orbezo.ms_bus.dto.BusRequestDTO;
 import orbezo.ms_bus.dto.BusResponseDTO;
 import orbezo.ms_bus.entity.Bus;
+import orbezo.ms_bus.exception.ResourceNotFoundException;
 import orbezo.ms_bus.repository.BusRepository;
 import orbezo.ms_bus.service.BusService;
 import org.springframework.stereotype.Service;

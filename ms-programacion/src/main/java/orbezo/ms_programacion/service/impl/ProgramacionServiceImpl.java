@@ -1,9 +1,12 @@
 package orbezo.ms_programacion.service.impl;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import orbezo.ms_programacion.client.BusFeignClient;
 import orbezo.ms_programacion.dto.ProgramacionRequestDTO;
 import orbezo.ms_programacion.dto.ProgramacionResponseDTO;
 import orbezo.ms_programacion.entity.Programacion;
+import orbezo.ms_programacion.exception.ResourceNotFoundException;
 import orbezo.ms_programacion.repository.ProgramacionRepository;
 import orbezo.ms_programacion.service.ProgramacionService;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class ProgramacionServiceImpl implements ProgramacionService {
 
     private final ProgramacionRepository programacionRepository;
+    private final BusFeignClient busFeignClient;  // ← Inyectar Feign
 
     private ProgramacionResponseDTO toResponseDTO(Programacion programacion) {
         return new ProgramacionResponseDTO(
@@ -34,6 +38,17 @@ public class ProgramacionServiceImpl implements ProgramacionService {
         programacion.setFecha(requestDTO.getFecha());
         programacion.setHora(requestDTO.getHora());
         return programacion;
+    }
+
+    // Método para validar que el bus existe
+    private void validateBusExists(Long idBus) {
+        try {
+            busFeignClient.getBusById(idBus);
+        } catch (FeignException.NotFound e) {
+            throw new ResourceNotFoundException("Bus no encontrado con ID: " + idBus);
+        } catch (FeignException e) {
+            throw new RuntimeException("Error al validar bus: " + e.getMessage());
+        }
     }
 
     @Override
@@ -83,12 +98,16 @@ public class ProgramacionServiceImpl implements ProgramacionService {
     @Override
     @Transactional
     public ProgramacionResponseDTO create(ProgramacionRequestDTO requestDTO) {
+        // Validar que el bus existe
+        validateBusExists(requestDTO.getIdBus());
+
         if (programacionRepository.existsByIdBusAndFechaAndHora(
                 requestDTO.getIdBus(),
                 requestDTO.getFecha(),
                 requestDTO.getHora())) {
             throw new RuntimeException("Ya existe una programación para este bus en esa fecha y hora");
         }
+
         Programacion programacion = toEntity(requestDTO);
         return toResponseDTO(programacionRepository.save(programacion));
     }
@@ -96,6 +115,9 @@ public class ProgramacionServiceImpl implements ProgramacionService {
     @Override
     @Transactional
     public ProgramacionResponseDTO update(Long id, ProgramacionRequestDTO requestDTO) {
+        // Validar que el bus existe
+        validateBusExists(requestDTO.getIdBus());
+
         Programacion programacion = programacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Programación no encontrada con ID: " + id));
 

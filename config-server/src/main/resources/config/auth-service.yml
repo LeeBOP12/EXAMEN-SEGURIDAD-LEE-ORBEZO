@@ -1,0 +1,17 @@
+server:
+  port: 8090
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+jwt:
+  expiration: 86400000
+
+logging:
+  level:
+    com.transporte.auth.client: DEBUG
