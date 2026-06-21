@@ -4,14 +4,19 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsuarioRequestDTO {
+
     @NotBlank(message = "El username es obligatorio")
-    @Size(min = 3, max = 50, message = "Username debe tener entre 3 y 50 caracteres")
+    @Size(min = 3, max = 50, message = "El username debe tener entre 3 y 50 caracteres")
     private String username;
 
     @NotBlank(message = "La contraseña es obligatoria")
@@ -19,9 +24,8 @@ public class UsuarioRequestDTO {
     private String password;
 
     @NotBlank(message = "El email es obligatorio")
-    @Email(message = "Email debe ser válido")
+    @Email(message = "El email debe ser válido")
     private String email;
 
-    @NotNull(message = "Los roles son obligatorios")
-    private Set<String> roles;
+    private List<String> roles;
 }

@@ -1,10 +1,8 @@
-server:
-  port: 8060
-
 spring:
   cloud:
     gateway:
       routes:
+        # 🔓 RUTAS PÚBLICAS (No requieren JWT)
         - id: auth-service
           uri: lb://auth-service
           predicates:
@@ -15,20 +13,21 @@ spring:
           predicates:
             - Path=/api/usuarios/**
 
-        - id: ms-destino
-          uri: lb://ms-destino
+        # 🔒 RUTAS PROTEGIDAS (Requieren JWT)
+        - id: ms-cliente
+          uri: lb://ms-cliente
           predicates:
-            - Path=/api/destinos/**
+            - Path=/api/clientes/**
 
         - id: ms-bus
           uri: lb://ms-bus
           predicates:
             - Path=/api/buses/**
 
-        - id: ms-cliente
-          uri: lb://ms-cliente
+        - id: ms-destino
+          uri: lb://ms-destino
           predicates:
-            - Path=/api/clientes/**
+            - Path=/api/destinos/**
 
         - id: ms-asiento
           uri: lb://ms-asiento
@@ -45,11 +44,19 @@ spring:
           predicates:
             - Path=/api/reservas/**
 
+# Configuración JWT para el Gateway
+jwt:
+  secret: miClaveSecretaSuperSeguraParaJWT1234567890
+
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
 
 logging:
   level:
-    ms_lib.api_gateway.filter: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    com.transporte.gateway: DEBUG

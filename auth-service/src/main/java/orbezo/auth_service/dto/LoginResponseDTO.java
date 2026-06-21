@@ -1,15 +1,19 @@
 package orbezo.auth_service.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ValidateTokenDTO {
-    private boolean valid;
-    private Long userId;
+public class LoginResponseDTO {
+    private String token;
     private String username;
-    private String rol;
+    private String email;
+    private List<String> roles;
 }

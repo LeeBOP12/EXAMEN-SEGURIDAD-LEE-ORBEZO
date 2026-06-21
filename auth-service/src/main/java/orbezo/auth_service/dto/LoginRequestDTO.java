@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginRequestDTO {
+
     @NotBlank(message = "El username es obligatorio")
     private String username;
 

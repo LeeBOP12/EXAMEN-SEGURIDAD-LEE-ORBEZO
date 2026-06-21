@@ -6,44 +6,49 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "usuarios")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idusuario")
     private Long idUsuario;
 
-    @Column(name = "username", nullable = false, unique = true, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
-    @Column(name = "activo")
+    @Column(nullable = false)
     private Boolean activo = true;
 
-    @Column(name = "fechacreacion")
+    @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "usuario_rol",
-            joinColumns = @JoinColumn(name = "idusuario"),
-            inverseJoinColumns = @JoinColumn(name = "idrol")
+            name = "usuarios_roles",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private Set<Rol> roles = new HashSet<>();
+    private List<Rol> roles = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
+        if (activo == null) {
+            activo = true;
+        }
     }
 }

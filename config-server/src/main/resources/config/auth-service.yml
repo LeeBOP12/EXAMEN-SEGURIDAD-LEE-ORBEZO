@@ -10,6 +10,7 @@ eureka:
     instance-id: ${spring.application.name}:${server.port}
 
 jwt:
+  secret: miClaveSecretaSuperSeguraParaJWT1234567890
   expiration: 86400000
 
 logging:

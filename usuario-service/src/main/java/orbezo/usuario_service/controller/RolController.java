@@ -2,8 +2,11 @@ package orbezo.usuario_service.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import orbezo.usuario_service.dto.RolRequestDTO;
+import orbezo.usuario_service.dto.RolResponseDTO;
 import orbezo.usuario_service.entity.Rol;
 import orbezo.usuario_service.repository.RolRepository;
+import orbezo.usuario_service.service.RolService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,48 +18,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RolController {
 
-    private final RolRepository rolRepository;
+    private final RolService rolService;
 
     @GetMapping
-    public ResponseEntity<List<Rol>> getAll() {
-        return ResponseEntity.ok(rolRepository.findAll());
+    public ResponseEntity<List<RolResponseDTO>> getAllRoles() {
+        return ResponseEntity.ok(rolService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Rol> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + id)));
+    public ResponseEntity<RolResponseDTO> getRolById(@PathVariable Long id) {
+        return ResponseEntity.ok(rolService.findById(id));
     }
 
     @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<Rol> getByNombre(@PathVariable String nombre) {
-        return ResponseEntity.ok(rolRepository.findByNombre(nombre)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombre)));
+    public ResponseEntity<RolResponseDTO> getRolByNombre(@PathVariable String nombre) {
+        return ResponseEntity.ok(rolService.findByNombre(nombre));
     }
 
     @PostMapping
-    public ResponseEntity<Rol> create(@Valid @RequestBody Rol rol) {
-        if (rolRepository.existsByNombre(rol.getNombre())) {
-            throw new RuntimeException("El rol '" + rol.getNombre() + "' ya existe");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(rolRepository.save(rol));
+    public ResponseEntity<RolResponseDTO> createRol(@Valid @RequestBody RolRequestDTO request) {
+        RolResponseDTO created = rolService.create(request);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Rol> update(@PathVariable Long id, @Valid @RequestBody Rol rol) {
-        Rol existingRol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + id));
-
-        existingRol.setNombre(rol.getNombre());
-        return ResponseEntity.ok(rolRepository.save(existingRol));
+    public ResponseEntity<RolResponseDTO> updateRol(
+            @PathVariable Long id,
+            @Valid @RequestBody RolRequestDTO request) {
+        return ResponseEntity.ok(rolService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (!rolRepository.existsById(id)) {
-            throw new RuntimeException("Rol no encontrado con ID: " + id);
-        }
-        rolRepository.deleteById(id);
+    public ResponseEntity<Void> deleteRol(@PathVariable Long id) {
+        rolService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

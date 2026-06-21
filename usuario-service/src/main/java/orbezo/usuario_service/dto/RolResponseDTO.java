@@ -1,15 +1,16 @@
 package orbezo.usuario_service.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDTO {
+public class RolResponseDTO {
 
-    private String username;
-    private String password;
+    private Long idRol;
+    private String nombreRol;
 }
