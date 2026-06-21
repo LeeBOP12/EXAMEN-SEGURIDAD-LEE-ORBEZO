@@ -1,0 +1,39 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: usuario-service
+  # Comenta esta línea si NO quieres usar Config Server
+  config:
+    import: "optional:configserver:http://localhost:8088"
+  profiles:
+    active: dev
+
+  # Configuración LOCAL de BD (para pruebas sin Config Server)
+  datasource:
+    url: jdbc:mysql://localhost:3307/db_usuario?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: mysql123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+logging:
+  level:
+    com.transporte: DEBUG
+    org.springframework.security: DEBUG
